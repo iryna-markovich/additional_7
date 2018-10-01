@@ -1,14 +1,50 @@
 module.exports = function solveSudoku(matrix) {
-  let solvedSudoku = [
-    [5, 3, 4, 6, 7, 8, 9, 1, 2],
-    [6, 7, 2, 1, 9, 5, 3, 4, 8],
-    [1, 9, 8, 3, 4, 2, 5, 6, 7],
-    [8, 5, 9, 7, 6, 1, 4, 2, 3],
-    [4, 2, 6, 8, 5, 3, 7, 9, 1],
-    [7, 1, 3, 9, 2, 4, 8, 5, 6],
-    [9, 6, 1, 5, 3, 7, 2, 8, 4],
-    [2, 8, 7, 4, 1, 9, 6, 3, 5],
-    [3, 4, 5, 2, 8, 6, 1, 7, 9]
-  ];
-  return solvedSudoku;
+  function solve(matrix) {
+    let row;
+    let cell;
+    let solved;
+    let num;
+
+    for (row = 0; row < 9; row++) {
+      for (cell = 0; cell < 9; cell++) {
+        if (!matrix[row][cell]) {
+          for (num = 1; num <= 9; num++) {
+            if (suit(matrix, row, cell, num)) {
+              matrix[row][cell] = num;
+              solved = solve(matrix);
+              if (solved) {
+                return true;
+              }
+              matrix[row][cell] = 0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  function suit(matrix, row, cell, num) {
+    let y = Math.floor((row / 3)) * 3;
+    let x = Math.floor((cell / 3)) * 3;
+
+    for (let i = 0; i < 9; i++) {
+      if ((i != row && matrix[i][cell] == num) || (i != cell && matrix[row][i] == num)) {
+        return false;
+      }
+    }
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (i != row && j != cell && matrix[y + i][x + j] == num) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  solve(matrix);
+  return matrix;
 }
